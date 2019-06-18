@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:p="http://www.springframework.org/schema/p"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans-4.0.xsd
+        http://www.springframework.org/schema/mvc
+        http://www.springframework.org/schema/mvc/spring-mvc-4.0.xsd
+        http://www.springframework.org/schema/context
+        http://www.springframework.org/schema/context/spring-context-4.0.xsd
+        http://code.alibabatech.com/schema/dubbo http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+
+
+    <!-- 加载注解驱动 -->
+    <mvc:annotation-driven/>
+
+    <!-- 视图解析器 -->
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="viewClass" value="org.springframework.web.servlet.view.JstlView"/>
+        <!-- jsp前缀 -->
+        <property name="prefix" value="/WEB-INF/jsp/"/>
+        <!-- jsp后缀 -->
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <!-- 扫描带Controller注解的类 -->
+    <context:component-scan base-package="jd.controller"/>
+
+    <!--引用dubbo服务-->
+    <!--提供方应用信息，用于计算依赖关系-->
+    <dubbo:application name="taotao-manager-web"/>
+    <!--注册中心的地址-->
+    <dubbo:registry protocol="zookeeper" address="192.168.10.88:2181"/>
+    <dubbo:reference interface="jd.service.UserService" id="userService"/>
+    <dubbo:reference interface="jd.service.CatService" id="catService"/>
+    <dubbo:reference interface="jd.service.ProductService" id="productService"/>
+    <dubbo:reference interface="jd.service.CartService" id="cartService"/>
+    <dubbo:reference interface="jd.service.OrderService" id="orderService"/>
+
+
+    <!--配置资源映射-->
+    <mvc:resources mapping="/css/**" location="/css/"/>
+    <mvc:resources mapping="/js/**" location="/js/"/>
+    <mvc:resources mapping="/img/**" location="/img/"/>
+    <mvc:resources mapping="/image/**" location="/image/"/>
+    <mvc:resources mapping="/images/**" location="/images/"/>
+    <mvc:resources mapping="/bank_img/**" location="/bank_img/"/>
+    <mvc:resources mapping="/fonts/**" location="/fonts/"/>
+    <mvc:resources mapping="/products/**" location="/products/"/>
+
+    <!-- 加载注解驱动 -->
+    <mvc:annotation-driven conversion-service="conversionService"/>
+
+    <!-- 转换器配置 -->
+    <bean id="conversionService"
+          class="org.springframework.format.support.FormattingConversionServiceFactoryBean">
+        <property name="converters">
+            <set>
+                <bean class="jd.converter.DateConverter"/>
+            </set>
+        </property>
+    </bean>
+
+
+</beans>
